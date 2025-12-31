@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StreamHub PK</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="profile.jpg">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 80px;
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            z-index: 10;
+        }
+
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-muted);
+            font-size: 24px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* --- Video Player Section --- */
+        .player-wrapper {
+            background: #000;
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            max-height: 60vh;
+            outline: none;
+        }
+
+        /* --- Channel Browser Section --- */
+        .browser-section {
+            height: 40vh;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .search-box {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            outline: none;
+            width: 200px;
+            transition: width 0.3s ease;
+        }
+
+        .search-box:focus {
+            width: 250px;
+            border-color: var(--accent);
+        }
+
+        /* --- Channel Grid --- */
+        .channel-grid {
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .channel-card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-3px);
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent);
+        }
+
+        .card-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            color: var(--text-main);
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-dark);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; 
+                height: 60px; 
+                flex-direction: row; 
+                justify-content: space-around; 
+                padding: 0;
+                order: 3; /* Move to bottom like an app dock */
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+            .nav-item { margin: 0; width: auto; flex: 1; height: 100%; border-radius: 0; }
+            .player-wrapper { height: 35vh; max-height: unset; flex: none; }
+            .browser-section { flex: 1; height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loader">
+        <div class="spinner"></div>
+        <div>Loading Channels...</div>
+    </div>
+
+    <nav class="sidebar">
+        <div class="nav-item active" onclick="switchTab('pakistan')" title="Pakistan Channels">
+            PK
+        </div>
+        <div class="nav-item" onclick="switchTab('sports')" title="Sports">
+            ⚽
+        </div>
+        <div class="nav-item" onclick="switchTab('all')" title="All Channels">
+            🌐
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="player-wrapper">
+            <video id="video" controls autoplay playsinline poster="profile.jpg"></video>
+        </div>
+
+        <div class="browser-section">
+            <div class="toolbar">
+                <div class="section-title" id="tab-title">Pakistan Channels</div>
+                <input type="text" id="search" class="search-box" placeholder="Search...">
+            </div>
+            <div class="channel-grid" id="grid">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+
+        const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+        let db = { all: [], pakistan: [], sports: [] };
+        let currentTab = 'pakistan';
+
+        const video = document.getElementById('video');
+        const grid = document.getElementById('grid');
+        const loader = document.getElementById('loader');
+        let hls;
+
+        // Fetch and Parse
+        async function init() {
+            try {
+                const res = await fetch(PLAYLIST_URL);
+                const text = await res.text();
+                parseM3U(text);
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+                renderGrid(db.pakistan); // Default view
+            } catch (e) {
+                alert("Failed to load playlist.");
+            }
+        }
+
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            let item = {};
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('#EXTINF:')) {
+                    // Extract Metadata
+                    const logoMatch = line.match(/tvg-logo="([^"]*)"/);
+                    const groupMatch = line.match(/group-title="([^"]*)"/);
+                    const nameParts = line.split(',');
+                    const name = nameParts[nameParts.length - 1].trim();
+
+                    item = {
+                        name: name,
+                        logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/50?text=TV',
+                        group: groupMatch ? groupMatch[1] : 'Uncategorized'
+                    };
+                } else if (line.startsWith('http')) {
+                    item.url = line;
+                    
+                    // Logic to categorize
+                    const isPak = (item.group && item.group.includes('Pakistan')) || item.name.includes('PK:') || item.name.includes('Pakistan');
+                    const isSports = (item.group && item.group.includes('Sports'));
+
+                    db.all.push(item);
+                    if (isPak) db.pakistan.push(item);
+                    if (isSports) db.sports.push(item);
+                    
+                    item = {};
+                }
+            });
+        }
+
+        function renderGrid(channels) {
+            grid.innerHTML = '';
+            // Limit to 100 for performance unless searching
+            const displayList = channels.slice(0, 150); 
+            
+            displayList.forEach(ch => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.innerHTML = `
+                    <img src="${ch.logo}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/50?text=?'">
+                    <div class="card-title">${ch.name}</div>
+                `;
+                card.onclick = () => playStream(ch.url);
+                grid.appendChild(card);
+            });
+
+            if(channels.length === 0) {
+                grid.innerHTML = '<div style="padding:20px; color:#94a3b8;">No channels found in this category.</div>';
+            }
+        }
+
+        function playStream(source) {
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source;
+                video.play();
+            }
+            // Scroll to top on mobile to see video
+            if(window.innerWidth < 768) window.scrollTo(0,0);
+        }
+
+        // Tab Switching
+        window.switchTab = function(tab) {
+            currentTab = tab;
+            
+            // Update UI
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Update Title
+            const titles = { 'pakistan': 'Pakistan Channels', 'sports': 'Sports Channels', 'all': 'All Channels' };
+            document.getElementById('tab-title').textContent = titles[tab];
+
+            // Render
+            renderGrid(db[tab]);
+        }
+
+        // Search
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const sourceArray = db[currentTab].length > 0 ? db[currentTab] : db.all;
+            const filtered = sourceArray.filter(ch => ch.name.toLowerCase().includes(term));
+            renderGrid(filtered);
+        });
+
+        init();
+    </script>
+</body>
+</html>
