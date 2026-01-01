@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Honey Tv</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="profile.jpg">
+    <meta name="theme-color" content="#002b5c"> <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Theme based on your image */
+            --bg-deep: linear-gradient(135deg, #001a4d 0%, #003399 100%);
+            --bg-panel: rgba(255, 255, 255, 0.1);
+            --honey-yellow: #ffcc00; /* The yellow from the logo */
+            --honey-glow: #ffd700;
+            --text-main: #ffffff;
+            --text-blue: #8ecae6;
+            --sidebar-bg: rgba(0, 20, 50, 0.95);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar / Bottom Nav --- */
+        .sidebar {
+            width: 80px;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid rgba(255,204,0,0.2);
+            z-index: 20;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+        }
+
+        .app-logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 14px;
+            color: var(--honey-yellow);
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-blue);
+            font-size: 24px;
+            position: relative;
+        }
+
+        .nav-item:hover { background: rgba(255,204,0,0.1); }
+        
+        .nav-item.active {
+            color: var(--honey-yellow);
+            background: rgba(255,204,0,0.15);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+        }
+
+        /* --- Main Layout --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* --- Player Area --- */
+        .player-wrapper {
+            width: 100%;
+            background: #000;
+            position: relative;
+            flex-shrink: 0; /* Prevents shrinking */
+        }
+        
+        /* Responsive Player Height */
+        .player-wrapper { height: 35vh; }
+        @media (min-width: 768px) { .player-wrapper { height: 50vh; } }
+
+        video {
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        /* --- Browser Section (The List) --- */
+        .browser-section {
+            flex: 1; /* Takes all remaining height */
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+            min-height: 0; /* Critical for flex scrolling */
+        }
+
+        .toolbar {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 26, 77, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            color: var(--honey-yellow);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,204,0,0.3);
+            padding: 8px 12px;
+            border-radius: 20px;
+            color: white;
+            outline: none;
+            width: 40%;
+            font-size: 14px;
+        }
+        .search-box::placeholder { color: rgba(255,255,255,0.5); }
+        .search-box:focus { border-color: var(--honey-yellow); background: rgba(0,0,0,0.3); }
+
+        /* --- Grid & Scrolling --- */
+        .channel-grid {
+            flex: 1;
+            overflow-y: auto; /* Enables scrolling */
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            align-content: start; /* content stays at top */
+        }
+
+        .channel-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .channel-card:active { transform: scale(0.96); }
+
+        .fav-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 18px;
+            color: rgba(255,255,255,0.3);
+            z-index: 5;
+            padding: 5px;
+        }
+        .fav-btn.is-fav { color: var(--honey-yellow); }
+
+        .card-img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            padding: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 0.8rem;
+            text-align: center;
+            color: #e0e0e0;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* --- Mobile Mobile Navigation --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            
+            .sidebar { 
+                width: 100%; 
+                height: 65px; 
+                flex-direction: row; 
+                justify-content: space-around; 
+                padding: 0;
+                order: 3; 
+                border-right: none;
+                border-top: 2px solid var(--honey-yellow);
+                background: #00122b;
+            }
+            .nav-item { margin: 0; width: auto; flex: 1; height: 100%; border-radius: 0; border:none; }
+            .nav-item.active { border-top: 4px solid var(--honey-yellow); background: linear-gradient(to bottom, rgba(255,204,0,0.1), transparent); box-shadow: none; }
+            
+            .app-logo { display: none; } /* Hide logo text on mobile nav to save space */
+        }
+
+        /* Loader */
+        .loading-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: #001a4d; z-index: 100;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            color: var(--honey-yellow);
+            transition: opacity 0.5s;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(255,204,0,0.3); border-top-color: var(--honey-yellow);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loader">
+        <div class="spinner"></div>
+        <div style="font-family:'Fredoka',sans-serif;">Loading Honey TV...</div>
+    </div>
+
+    <nav class="sidebar">
+        <div class="app-logo">The<br>Honey TV</div>
+        
+        <div class="nav-item active" onclick="switchTab('favorites')" title="Favorites">
+            ♥
+        </div>
+
+        <div class="nav-item" onclick="switchTab('pakistan')" title="Pakistan">
+            PK
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('sports')" title="Sports">
+            ⚽
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('all')" title="All Channels">
+            🌐
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="player-wrapper">
+            <video id="video" controls playsinline poster="profile.jpg"></video>
+        </div>
+
+        <div class="browser-section">
+            <div class="toolbar">
+                <div class="section-title" id="tab-title">My Favorites</div>
+                <input type="text" id="search" class="search-box" placeholder="Search...">
+            </div>
+            
+            <div class="channel-grid" id="grid">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIG & STATE ---
+        const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+        let db = { all: [], pakistan: [], sports: [], favorites: [] };
+        let currentTab = 'favorites';
+        let favoritesList = JSON.parse(localStorage.getItem('honeyTvFavs')) || [];
+
+        const video = document.getElementById('video');
+        const grid = document.getElementById('grid');
+        const loader = document.getElementById('loader');
+        let hls;
+
+        // --- 2. INITIALIZATION ---
+        async function init() {
+            try {
+                const res = await fetch(PLAYLIST_URL);
+                const text = await res.text();
+                parseM3U(text);
+                
+                // Hide loader
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+                
+                // Render initial tab (Favorites)
+                refreshFavoritesDB();
+                renderGrid(db.favorites);
+                
+            } catch (e) {
+                console.error(e);
+                alert("Could not load playlist. Check internet.");
+                loader.style.display = 'none';
+            }
+        }
+
+        // --- 3. PARSER (Improved) ---
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            let item = {};
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('#EXTINF:')) {
+                    // Extract data using regex
+                    const logoMatch = line.match(/tvg-logo="([^"]*)"/);
+                    const groupMatch = line.match(/group-title="([^"]*)"/);
+                    const countryMatch = line.match(/tvg-country="([^"]*)"/); // Look for country code
+                    const nameParts = line.split(',');
+                    const name = nameParts[nameParts.length - 1].trim();
+
+                    item = {
+                        name: name,
+                        logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/50/FFCC00/000000?text=TV',
+                        group: groupMatch ? groupMatch[1] : '',
+                        country: countryMatch ? countryMatch[1] : ''
+                    };
+                } else if (line.startsWith('http')) {
+                    item.url = line;
+                    
+                    // Categorization Logic
+                    const n = item.name.toLowerCase();
+                    const g = item.group.toLowerCase();
+
+                    // Broadened Pakistan Filter
+                    const isPak = g.includes('pakistan') || n.includes('pakistan') || n.includes('urdu') || item.country === 'PK';
+                    
+                    // Sports Filter
+                    const isSports = g.includes('sports') || n.includes('sports') || g.includes('football') || g.includes('cricket');
+
+                    db.all.push(item);
+                    if (isPak) db.pakistan.push(item);
+                    if (isSports) db.sports.push(item);
+                    
+                    item = {};
+                }
+            });
+        }
+
+        // --- 4. FAVORITES LOGIC ---
+        function toggleFavorite(e, url) {
+            e.stopPropagation(); // Stop video from playing when clicking heart
+            
+            const index = favoritesList.indexOf(url);
+            if (index === -1) {
+                favoritesList.push(url);
+            } else {
+                favoritesList.splice(index, 1);
+            }
+            
+            localStorage.setItem('honeyTvFavs', JSON.stringify(favoritesList));
+            
+            // Re-render to show change
+            refreshFavoritesDB();
+            if(currentTab === 'favorites') {
+                renderGrid(db.favorites);
+            } else {
+                // If in other tabs, just re-render current list to update heart icons
+                renderGrid(db[currentTab]); 
+            }
+        }
+
+        function refreshFavoritesDB() {
+            // Find full channel objects for saved URLs
+            db.favorites = db.all.filter(ch => favoritesList.includes(ch.url));
+        }
+
+        // --- 5. RENDERING ---
+        function renderGrid(channels) {
+            grid.innerHTML = '';
+            
+            if(channels.length === 0) {
+                grid.innerHTML = `<div style="text-align:center; padding:40px; color:#8ecae6; width:100%;">
+                    ${currentTab === 'favorites' ? 'No favorites yet.<br>Click the ♥ on channels to add them!' : 'No channels found.'}
+                </div>`;
+                return;
+            }
+
+            // Limit initial render for performance (unless searching/favorites)
+            const limit = (currentTab === 'all' && document.getElementById('search').value === '') ? 100 : channels.length;
+            const displayList = channels.slice(0, limit);
+
+            displayList.forEach(ch => {
+                const isFav = favoritesList.includes(ch.url);
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.innerHTML = `
+                    <div class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFavorite(event, '${ch.url}')">
+                        ${isFav ? '♥' : '♡'}
+                    </div>
+                    <img src="${ch.logo}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/50/FFCC00/000000?text=?'">
+                    <div class="card-title">${ch.name}</div>
+                `;
+                card.onclick = () => playStream(ch.url);
+                grid.appendChild(card);
+            });
+        }
+
+        // --- 6. PLAYER ---
+        function playStream(source) {
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source;
+                video.play();
+            }
+            // Auto scroll to top on mobile
+            if(window.innerWidth < 768) window.scrollTo(0,0);
+        }
+
+        // --- 7. NAVIGATION ---
+        window.switchTab = function(tab) {
+            currentTab = tab;
+            
+            // Visual Update
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Title Update
+            const titles = { 
+                'favorites': 'My Favorites',
+                'pakistan': 'Pakistan Channels', 
+                'sports': 'Sports Channels', 
+                'all': 'All Channels' 
+            };
+            document.getElementById('tab-title').textContent = titles[tab];
+
+            // Render
+            refreshFavoritesDB(); // Ensure favorites are fresh
+            renderGrid(db[tab]);
+        }
+
+        // --- 8. SEARCH ---
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const sourceArray = db[currentTab];
+            const filtered = sourceArray.filter(ch => ch.name.toLowerCase().includes(term));
+            renderGrid(filtered);
+        });
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
