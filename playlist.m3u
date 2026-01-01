@@ -1,37 +1,70 @@
 #EXTM3U
 
-#EXTINF:-1 tvg-id="HumTV.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/MuX0tC7.png" group-title="Pakistan",HUM TV
-http://110.37.228.12:8080/HumTV/index.m3u8
+# ==============================
+# PAKISTAN CHANNELS
+# ==============================
 
-#EXTINF:-1 tvg-id="GeoNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/F0fI0gM.png" group-title="Pakistan",Geo News
-https://f5-ppu-mz.nscdn.com/Dn40z/GeoNews/chunk_1.m3u8
-
-#EXTINF:-1 tvg-id="PTVHome.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/zV8A5fL.png" group-title="Pakistan",PTV Home
-https://m1-live.ptv.com.pk/ptvhome/720p.m3u8
-
-#EXTINF:-1 tvg-id="PTVNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/8f5yH2A.png" group-title="Pakistan",PTV News
-https://m1-live.ptv.com.pk/ptvnews/720p.m3u8
-
-#EXTINF:-1 tvg-id="PTVWorld.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/Q2h3y4B.png" group-title="Pakistan",PTV World
-https://m1-live.ptv.com.pk/ptvworld/720p.m3u8
-
-#EXTINF:-1 tvg-id="92News.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/12345.png" group-title="Pakistan",92 News
+#EXTINF:-1 tvg-id="92News.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/12345.png" group-title="Pakistan",92 News HD
 https://live.Dvrcast.com/92newsHd/92newshd/live.m3u8
 
-#EXTINF:-1 tvg-id="ExpressNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/abcde.png" group-title="Pakistan",Express News
-https://live.expressnews.pk/hls/expressnews.m3u8
+#EXTINF:-1 tvg-id="AbbTakk.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/2/22/Abb_Takk_News_Logo.png" group-title="Pakistan",Abb Takk News
+https://cdn-abbtakk-live.akamaized.net/Content/HLS/Live/Channel(AbbTakk)/index.m3u8
 
-#EXTINF:-1 tvg-id="Samaa.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/samaa.png" group-title="Pakistan",Samaa TV
-https://live-samaa-tv.akamaized.net/Content/HLS/Live/Channel(Samaa)/index.m3u8
+#EXTINF:-1 tvg-id="AajNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/Aaj_News_Logo.svg/1200px-Aaj_News_Logo.svg.png" group-title="Pakistan",Aaj News
+https://aajnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(AajNews)/index.m3u8
 
-#EXTINF:-1 tvg-id="TenSports.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/sports1.png" group-title="Sports",Ten Sports (Test Link)
-http://stream.tensports.com.pk/hls/stream.m3u8
+#EXTINF:-1 tvg-id="BolNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e4/BOL_Network_Logo.jpg" group-title="Pakistan",Bol News
+https://bolnetwork-live.cdn.ptCL.net/Content/HLS/Live/Channel(BolNews)/index.m3u8
 
-#EXTINF:-1 tvg-id="Willow.us" tvg-country="US" tvg-logo="https://i.imgur.com/cricket.png" group-title="Sports",Willow Cricket
+#EXTINF:-1 tvg-id="DawnNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/6/67/Dawn_News_Logo.png" group-title="Pakistan",Dawn News
+https://dawnnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(DawnNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="DunyaNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/67/Dunya_News_Logo.svg/1200px-Dunya_News_Logo.svg.png" group-title="Pakistan",Dunya News
+https://dunyannews-live.cdn.ptCL.net/Content/HLS/Live/Channel(DunyaNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="ExpressNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Express_News_Logo.svg/1200px-Express_News_Logo.svg.png" group-title="Pakistan",Express News
+https://expressnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(ExpressNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="GNN.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/GNN_HD_News_Channel_Logo.jpg/800px-GNN_HD_News_Channel_Logo.jpg" group-title="Pakistan",GNN
+https://gnn-live.cdn.ptCL.net/Content/HLS/Live/Channel(GNN)/index.m3u8
+
+#EXTINF:-1 tvg-id="HumNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/1/10/Hum_News_logo.png" group-title="Pakistan",Hum News
+https://humnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(HumNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="HumTV.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/2/21/Hum_TV_Logo.png" group-title="Pakistan",Hum TV (Official)
+http://110.37.228.12:8080/HumTV/index.m3u8
+
+#EXTINF:-1 tvg-id="NeoNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/3/36/Neo_TV_Network_Logo.png" group-title="Pakistan",Neo News
+https://neonews-live.cdn.ptCL.net/Content/HLS/Live/Channel(NeoNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="PTVHome.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/7/77/PTV_Home_Logo.svg/1200px-PTV_Home_Logo.svg.png" group-title="Pakistan",PTV Home
+https://m1-live.ptv.com.pk/ptvhome/720p.m3u8
+
+#EXTINF:-1 tvg-id="PTVNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/87/PTV_News_Logo.svg/1200px-PTV_News_Logo.svg.png" group-title="Pakistan",PTV News
+https://m1-live.ptv.com.pk/ptvnews/720p.m3u8
+
+#EXTINF:-1 tvg-id="PTVWorld.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/36/PTV_World_Logo.svg/1200px-PTV_World_Logo.svg.png" group-title="Pakistan",PTV World
+https://m1-live.ptv.com.pk/ptvworld/720p.m3u8
+
+#EXTINF:-1 tvg-id="PublicNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/5/52/Public_News_Logo.png" group-title="Pakistan",Public News
+https://publicnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(PublicNews)/index.m3u8
+
+#EXTINF:-1 tvg-id="Samaa.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/c/c5/Samaa_TV_Logo.svg/1200px-Samaa_TV_Logo.svg.png" group-title="Pakistan",Samaa TV
+https://samaa-live.cdn.ptCL.net/Content/HLS/Live/Channel(Samaa)/index.m3u8
+
+#EXTINF:-1 tvg-id="SuchTV.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/b/b5/Such_TV_Logo.svg/1200px-Such_TV_Logo.svg.png" group-title="Pakistan",Such TV
+https://suchtv-live.cdn.ptCL.net/Content/HLS/Live/Channel(SuchTV)/index.m3u8
+
+# ==============================
+# SPORTS CHANNELS (Mixed Sources)
+# ==============================
+
+#EXTINF:-1 tvg-id="DDSports.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/88/DD_Sports_logo.svg/1200px-DD_Sports_logo.svg.png" group-title="Sports",DD Sports (Official)
+http://ns4.jagobd.com.bd/c2/live/channel/DDSports/index.m3u8
+
+#EXTINF:-1 tvg-id="Willow.us" tvg-country="US" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Willow_TV_logo.svg/1200px-Willow_TV_logo.svg.png" group-title="Sports",Willow Cricket
 http://c3.pty.l.googleusercontent.com/hls/willow_cricket.m3u8
 
-#EXTINF:-1 tvg-id="RedBull.at" tvg-country="AT" tvg-logo="https://i.imgur.com/redbull.png" group-title="Sports",Red Bull TV
+#EXTINF:-1 tvg-id="RedBull.at" tvg-country="AT" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Red_Bull_Logo.svg/1200px-Red_Bull_Logo.svg.png" group-title="Sports",Red Bull TV
 https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
-
-#EXTINF:-1 tvg-id="AlJazeera.qa" tvg-country="QA" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Al_Jazeera_English.svg/1200px-Al_Jazeera_English.svg.png" group-title="All",Al Jazeera English
-https://live-hls-web-aje.getaj.net/AJE/03.m3u8
+ 
