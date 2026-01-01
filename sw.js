@@ -1,4 +1,4 @@
-const CACHE_NAME = 'streamhub-v2';
+const CACHE_NAME = 'streamhub-v3';
 const urlsToCache = [
   './',
   './index.html',
