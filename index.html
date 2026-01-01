@@ -21,7 +21,7 @@
             --honey-yellow: #ffcc00;
             --text-main: #ffffff;
             --text-blue: #8ecae6;
-            --sidebar-bg: rgba(0, 20, 50, 0.98);
+            --sidebar-bg: #00122b;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -33,49 +33,7 @@
             margin: 0;
             display: flex;
             height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- Sidebar (Desktop) --- */
-        .sidebar {
-            width: 80px;
-            background: var(--sidebar-bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-            border-right: 1px solid rgba(255,204,0,0.2);
-            z-index: 50;
-        }
-
-        .app-logo {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 14px;
-            color: var(--honey-yellow);
-            margin-bottom: 20px;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        .nav-item {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: var(--text-blue);
-            font-size: 24px;
-        }
-
-        .nav-item.active {
-            color: var(--honey-yellow);
-            background: rgba(255,204,0,0.15);
-            border: 1px solid rgba(255, 204, 0, 0.3);
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+            overflow: hidden; /* Prevent body scroll */
         }
 
         /* --- Main Content --- */
@@ -83,14 +41,15 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
+            height: 100%;
+            padding-bottom: 70px; /* IMPORTANT: Space for the mobile nav bar */
         }
 
         /* --- Video Player --- */
         .player-wrapper {
             background: #000;
             width: 100%;
-            height: 40vh; /* Fixed height for player */
+            height: 35vh; 
             flex-shrink: 0;
             z-index: 10;
         }
@@ -103,7 +62,8 @@
             display: flex;
             flex-direction: column;
             background: rgba(0,0,0,0.2);
-            overflow: hidden; /* Contains the scrollable grid */
+            overflow: hidden; 
+            position: relative;
         }
 
         .toolbar {
@@ -131,7 +91,7 @@
             border-radius: 20px;
             color: white;
             outline: none;
-            width: 50%; /* Wider search box */
+            width: 50%;
             font-size: 14px;
         }
 
@@ -140,7 +100,6 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
-            padding-bottom: 80px; /* Extra padding for mobile nav */
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 10px;
@@ -186,23 +145,58 @@
             text-overflow: ellipsis;
         }
 
+        /* --- Sidebar / Bottom Nav --- */
+        .sidebar {
+            width: 80px;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid rgba(255,204,0,0.2);
+            z-index: 9999; /* Super high Z-Index to stay on top */
+        }
+
+        .app-logo {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 14px;
+            color: var(--honey-yellow);
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            width: 50px; height: 50px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            color: var(--text-blue);
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: var(--honey-yellow);
+            background: rgba(255,204,0,0.15);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+        }
+
         /* --- MOBILE TWEAKS --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             
-            /* Pin Sidebar to bottom */
             .sidebar { 
-                position: fixed;
-                bottom: 0;
-                left: 0;
+                position: fixed; /* Lock to screen */
+                bottom: 0; left: 0; right: 0;
                 width: 100%; 
-                height: 70px; /* Fixed nav height */
+                height: 70px; 
                 flex-direction: row; 
                 justify-content: space-around; 
                 padding: 0;
                 border-right: none;
                 border-top: 2px solid var(--honey-yellow);
-                background: #00122b;
                 box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
             }
             
@@ -210,15 +204,14 @@
             .nav-item.active { border-top: 4px solid var(--honey-yellow); border-bottom: none; border-left: none; border-right: none; }
             .app-logo { display: none; }
             
-            /* Adjust content to fit above nav */
-            .main-content { height: 100%; padding-bottom: 70px; }
-            .player-wrapper { height: 35vh; }
+            /* Give space for bottom nav */
+            .main-content { padding-bottom: 70px; }
         }
 
         /* Loader */
         .loading-overlay {
             position: absolute; top:0; left:0; width:100%; height:100%;
-            background: #001a4d; z-index: 100;
+            background: #001a4d; z-index: 10000;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
             color: var(--honey-yellow);
             transition: opacity 0.5s;
@@ -246,7 +239,7 @@
         <div class="browser-section">
             <div class="toolbar">
                 <div class="section-title" id="tab-title">My Favorites</div>
-                <input type="text" id="search" class="search-box" placeholder="Search All Channels...">
+                <input type="text" id="search" class="search-box" placeholder="Search All...">
             </div>
             
             <div class="channel-grid" id="grid">
@@ -255,6 +248,7 @@
     </div>
 
     <nav class="sidebar">
+        <div class="app-logo">The<br>Honey TV</div>
         <div class="nav-item active" onclick="switchTab('favorites')" title="Favorites">♥</div>
         <div class="nav-item" onclick="switchTab('pakistan')" title="Pakistan">PK</div>
         <div class="nav-item" onclick="switchTab('sports')" title="Sports">⚽</div>
@@ -273,6 +267,18 @@
         const searchInput = document.getElementById('search');
         let hls;
 
+        // --- BACK BUTTON LOGIC ---
+        // 1. Set initial history state
+        window.history.replaceState({tab: 'favorites'}, null, '');
+
+        // 2. Listen for Back Button
+        window.addEventListener('popstate', function(event) {
+            // If we went back, force switch to favorites
+            if (currentTab !== 'favorites') {
+                switchTab('favorites', false); // false = don't push history again
+            }
+        });
+
         // --- Init ---
         async function init() {
             try {
@@ -281,7 +287,6 @@
                 parseM3U(text);
                 loader.style.opacity = '0';
                 setTimeout(() => loader.remove(), 500);
-                
                 refreshFavoritesDB();
                 renderGrid(db.favorites);
             } catch (e) {
@@ -303,7 +308,6 @@
                     const countryMatch = line.match(/tvg-country="([^"]*)"/);
                     const nameParts = line.split(',');
                     const name = nameParts[nameParts.length - 1].trim();
-
                     item = {
                         name: name,
                         logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/50/FFCC00/000000?text=TV',
@@ -314,7 +318,6 @@
                     item.url = line;
                     const n = item.name.toLowerCase();
                     
-                    // Filters
                     const isPak = item.group.includes('pakistan') || n.includes('pakistan') || n.includes('urdu') || item.country === 'PK';
                     const isSports = item.group.includes('sport') || n.includes('sport') || item.group.includes('football') || item.group.includes('cricket');
 
@@ -326,29 +329,21 @@
             });
         }
 
-        // --- Favorites ---
         function toggleFavorite(e, url) {
             e.stopPropagation();
             const index = favoritesList.indexOf(url);
             if (index === -1) favoritesList.push(url);
             else favoritesList.splice(index, 1);
-            
             localStorage.setItem('honeyTvFavs', JSON.stringify(favoritesList));
             refreshFavoritesDB();
-            
-            // If searching, keep search results but update hearts. If not, refresh tab.
-            if(searchInput.value !== '') {
-                doSearch(searchInput.value);
-            } else {
-                renderGrid(db[currentTab]);
-            }
+            if(searchInput.value !== '') doSearch(searchInput.value);
+            else renderGrid(db[currentTab]);
         }
 
         function refreshFavoritesDB() {
             db.favorites = db.all.filter(ch => favoritesList.includes(ch.url));
         }
 
-        // --- Render ---
         function renderGrid(channels) {
             grid.innerHTML = '';
             if(channels.length === 0) {
@@ -358,9 +353,8 @@
                 grid.innerHTML = `<div style="text-align:center; padding:30px; color:#aaa; width:100%;">${msg}</div>`;
                 return;
             }
-
-            // Optimization: Only render first 100 unless filtered
-            const limit = (channels.length > 200) ? 100 : channels.length;
+            // Render Limit
+            const limit = (channels.length > 200 && searchInput.value === '') ? 100 : channels.length;
             const list = channels.slice(0, limit);
 
             list.forEach(ch => {
@@ -379,7 +373,6 @@
             });
         }
 
-        // --- Player ---
         function playStream(source) {
             if (Hls.isSupported()) {
                 if (hls) hls.destroy();
@@ -394,14 +387,27 @@
             if(window.innerWidth < 768) window.scrollTo(0,0);
         }
 
-        // --- Navigation ---
-        window.switchTab = function(tab) {
-            currentTab = tab;
-            searchInput.value = ''; // Clear search on tab switch
+        // --- Navigation Logic ---
+        window.switchTab = function(tab, updateHistory = true) {
             
-            // Update UI
+            // Manage History for Back Button
+            if (updateHistory) {
+                if (tab !== 'favorites') {
+                    // Push state so back button works
+                    window.history.pushState({tab: tab}, null, '');
+                } else {
+                    // Clear forward history if going back to favs manually
+                    // (We can't truly clear browser history, but we don't push)
+                }
+            }
+
+            currentTab = tab;
+            searchInput.value = '';
+            
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            // Find the nav item that corresponds to this tab
+            const activeBtn = document.querySelector(`.nav-item[onclick="switchTab('${tab}')"]`);
+            if(activeBtn) activeBtn.classList.add('active');
             
             const titles = { 'favorites': 'My Favorites', 'pakistan': 'Pakistan Channels', 'sports': 'Sports', 'all': 'All Channels' };
             document.getElementById('tab-title').textContent = titles[tab];
@@ -410,7 +416,6 @@
             renderGrid(db[tab]);
         }
 
-        // --- Search ---
         searchInput.addEventListener('input', (e) => doSearch(e.target.value));
 
         function doSearch(val) {
@@ -419,7 +424,6 @@
                 renderGrid(db[currentTab]);
                 return;
             }
-            // Search GLOBALLY if term exists
             const filtered = db.all.filter(ch => ch.name.toLowerCase().includes(term));
             renderGrid(filtered);
         }
