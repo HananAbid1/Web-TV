@@ -31,7 +31,7 @@ https://gnn-live.cdn.ptCL.net/Content/HLS/Live/Channel(GNN)/index.m3u8
 #EXTINF:-1 tvg-id="HumNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/1/10/Hum_News_logo.png" group-title="Pakistan",Hum News
 https://humnews-live.cdn.ptCL.net/Content/HLS/Live/Channel(HumNews)/index.m3u8
 
-#EXTINF:-1 tvg-id="HumTV.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/2/21/Hum_TV_Logo.png" group-title="Pakistan",Hum TV (Official)
+#EXTINF:-1 tvg-id="HumTV.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/2/21/Hum_TV_Logo.png" group-title="Pakistan",Hum TV
 http://110.37.228.12:8080/HumTV/index.m3u8
 
 #EXTINF:-1 tvg-id="NeoNews.pk" tvg-country="PK" tvg-logo="https://upload.wikimedia.org/wikipedia/en/3/36/Neo_TV_Network_Logo.png" group-title="Pakistan",Neo News
@@ -56,15 +56,45 @@ https://samaa-live.cdn.ptCL.net/Content/HLS/Live/Channel(Samaa)/index.m3u8
 https://suchtv-live.cdn.ptCL.net/Content/HLS/Live/Channel(SuchTV)/index.m3u8
 
 # ==============================
-# SPORTS CHANNELS (Mixed Sources)
+# INDIAN CHANNELS (New)
 # ==============================
 
-#EXTINF:-1 tvg-id="DDSports.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/88/DD_Sports_logo.svg/1200px-DD_Sports_logo.svg.png" group-title="Sports",DD Sports (Official)
+#EXTINF:-1 tvg-id="DDNational.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/c/c0/Doordarshan_Logo.svg/1200px-Doordarshan_Logo.svg.png" group-title="India",DD National
+https://hm-dai.ns.cdn.live/linear/hls/event/t5nE0Ie9S4C322-z6q_N6A/master.m3u8
+
+#EXTINF:-1 tvg-id="DDNews.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/DD_News.png/800px-DD_News.png" group-title="India",DD News
+https://hm-dai.ns.cdn.live/linear/hls/event/w_2c1V56RamM8MTD6A1u-g/master.m3u8
+
+#EXTINF:-1 tvg-id="DDSports.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/8/88/DD_Sports_logo.svg/1200px-DD_Sports_logo.svg.png" group-title="India",DD Sports
 http://ns4.jagobd.com.bd/c2/live/channel/DDSports/index.m3u8
+
+#EXTINF:-1 tvg-id="NDTVIndia.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/NDTV_India.svg/1200px-NDTV_India.svg.png" group-title="India",NDTV India
+https://ndtvindia-live.akamaized.net/hls/live/2034967/ndtvindia/master.m3u8
+
+#EXTINF:-1 tvg-id="IndiaTV.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/India_TV_logo.svg/1200px-India_TV_logo.svg.png" group-title="India",India TV
+https://live-indiatv-cdn.akamaized.net/live/748805/index.m3u8
+
+#EXTINF:-1 tvg-id="9XM.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/9XM_Logo.png/600px-9XM_Logo.png" group-title="India",9XM Music
+https://9xm-live.cdn.zeegnition.com/9xm/index.m3u8
+
+#EXTINF:-1 tvg-id="Mastiii.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/28/Mastiii_TV_Logo.png" group-title="India",Mastiii Music
+https://live.tv9.com/live/720p/mastiii.m3u8
+
+#EXTINF:-1 tvg-id="RepublicBharat.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Republic_Bharat_Logo.png/800px-Republic_Bharat_Logo.png" group-title="India",Republic Bharat
+https://d2q8p4pe5spbab.cloudfront.net/out/v1/d356c39f046f4810a97c36a312108b7e/index.m3u8
+
+#EXTINF:-1 tvg-id="Zoom.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Zoom_TV_Logo.png/800px-Zoom_TV_Logo.png" group-title="India",Zoom TV
+https://timesnownews-live.cw-cdn.com/zoom/index.m3u8
+
+#EXTINF:-1 tvg-id="ZeeNews.in" tvg-country="IN" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Zee_News_Logo.png/800px-Zee_News_Logo.png" group-title="India",Zee News
+https://zeenews-live.cdn.zeegnition.com/zeenews/index.m3u8
+
+# ==============================
+# SPORTS CHANNELS (Mixed)
+# ==============================
 
 #EXTINF:-1 tvg-id="Willow.us" tvg-country="US" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Willow_TV_logo.svg/1200px-Willow_TV_logo.svg.png" group-title="Sports",Willow Cricket
 http://c3.pty.l.googleusercontent.com/hls/willow_cricket.m3u8
 
 #EXTINF:-1 tvg-id="RedBull.at" tvg-country="AT" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Red_Bull_Logo.svg/1200px-Red_Bull_Logo.svg.png" group-title="Sports",Red Bull TV
 https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
- 
