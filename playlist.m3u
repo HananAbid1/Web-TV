@@ -1,0 +1,37 @@
+#EXTM3U
+
+#EXTINF:-1 tvg-id="HumTV.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/MuX0tC7.png" group-title="Pakistan",HUM TV
+http://110.37.228.12:8080/HumTV/index.m3u8
+
+#EXTINF:-1 tvg-id="GeoNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/F0fI0gM.png" group-title="Pakistan",Geo News
+https://f5-ppu-mz.nscdn.com/Dn40z/GeoNews/chunk_1.m3u8
+
+#EXTINF:-1 tvg-id="PTVHome.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/zV8A5fL.png" group-title="Pakistan",PTV Home
+https://m1-live.ptv.com.pk/ptvhome/720p.m3u8
+
+#EXTINF:-1 tvg-id="PTVNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/8f5yH2A.png" group-title="Pakistan",PTV News
+https://m1-live.ptv.com.pk/ptvnews/720p.m3u8
+
+#EXTINF:-1 tvg-id="PTVWorld.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/Q2h3y4B.png" group-title="Pakistan",PTV World
+https://m1-live.ptv.com.pk/ptvworld/720p.m3u8
+
+#EXTINF:-1 tvg-id="92News.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/12345.png" group-title="Pakistan",92 News
+https://live.Dvrcast.com/92newsHd/92newshd/live.m3u8
+
+#EXTINF:-1 tvg-id="ExpressNews.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/abcde.png" group-title="Pakistan",Express News
+https://live.expressnews.pk/hls/expressnews.m3u8
+
+#EXTINF:-1 tvg-id="Samaa.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/samaa.png" group-title="Pakistan",Samaa TV
+https://live-samaa-tv.akamaized.net/Content/HLS/Live/Channel(Samaa)/index.m3u8
+
+#EXTINF:-1 tvg-id="TenSports.pk" tvg-country="PK" tvg-logo="https://i.imgur.com/sports1.png" group-title="Sports",Ten Sports (Test Link)
+http://stream.tensports.com.pk/hls/stream.m3u8
+
+#EXTINF:-1 tvg-id="Willow.us" tvg-country="US" tvg-logo="https://i.imgur.com/cricket.png" group-title="Sports",Willow Cricket
+http://c3.pty.l.googleusercontent.com/hls/willow_cricket.m3u8
+
+#EXTINF:-1 tvg-id="RedBull.at" tvg-country="AT" tvg-logo="https://i.imgur.com/redbull.png" group-title="Sports",Red Bull TV
+https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
+
+#EXTINF:-1 tvg-id="AlJazeera.qa" tvg-country="QA" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Al_Jazeera_English.svg/1200px-Al_Jazeera_English.svg.png" group-title="All",Al Jazeera English
+https://live-hls-web-aje.getaj.net/AJE/03.m3u8
