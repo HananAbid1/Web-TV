@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Honey Tv</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="profile.jpg">
+    <meta name="theme-color" content="#002b5c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: linear-gradient(135deg, #001a4d 0%, #003399 100%);
+            --honey-yellow: #ffcc00;
+            --text-main: #ffffff;
+            --text-blue: #8ecae6;
+            --sidebar-bg: #00122b;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #001a4d; z-index: 20000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 20px;
+            width: 100%; max-width: 350px; border: 1px solid var(--honey-yellow); text-align: center;
+        }
+        .login-title { font-family: 'Fredoka', sans-serif; font-size: 24px; color: var(--honey-yellow); margin-bottom: 20px; }
+        .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(0,0,0,0.3); color: white; font-size: 16px; }
+        .login-btn { background: var(--honey-yellow); color: #001a4d; font-weight: bold; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        .error-msg { color: #ff6b6b; margin-top: 10px; font-size: 14px; display: none; }
+
+        /* --- APP STRUCTURE --- */
+        /* Flex row for desktop, changes to column for mobile */
+        #app-content { 
+            display: none; 
+            width: 100%; 
+            height: 100%; 
+            flex-direction: row; 
+            overflow: hidden; /* Crucial for internal scrolling */
+        } 
+
+        .main-content {
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative;
+            height: 100%; /* Force full height */
+            min-height: 0; /* Fix for flex scrolling */
+        }
+
+        .player-wrapper { background: #000; width: 100%; height: 40vh; flex-shrink: 0; z-index: 10; }
+        video { width: 100%; height: 100%; outline: none; }
+
+        .browser-section { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background: rgba(0,0,0,0.2); 
+            overflow: hidden; /* Contains the grid */
+            position: relative;
+            min-height: 0; /* Critical Fix for Scrolling */
+        }
+        
+        .toolbar { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 26, 77, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1); height: 60px; flex-shrink: 0; }
+        .section-title { font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: var(--honey-yellow); white-space: nowrap; }
+        .search-box { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,204,0,0.3); padding: 8px 12px; border-radius: 20px; color: white; outline: none; width: 50%; font-size: 14px; }
+
+        .channel-grid { 
+            flex: 1; 
+            overflow-y: auto; /* Enable Scroll */
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+            padding: 15px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            gap: 10px;
+            align-content: start;
+        }
+        
+        .channel-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
+        .fav-btn { position: absolute; top: 5px; right: 5px; font-size: 20px; color: rgba(255,255,255,0.3); padding: 5px; z-index: 5; }
+        .fav-btn.is-fav { color: var(--honey-yellow); }
+        .card-img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; background: white; border-radius: 50%; padding: 2px; }
+        .card-title { font-size: 0.75rem; text-align: center; color: #e0e0e0; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- SIDEBAR (Desktop Defaults) --- */
+        .sidebar {
+            width: 80px; background: var(--sidebar-bg); display: flex; flex-direction: column; 
+            align-items: center; padding-top: 20px; border-right: 1px solid rgba(255,204,0,0.2); z-index: 50;
+        }
+        .app-logo { font-family: 'Fredoka', sans-serif; font-size: 14px; color: var(--honey-yellow); margin-bottom: 20px; text-align: center; line-height: 1.2; }
+        .nav-item { width: 50px; height: 50px; margin-bottom: 15px; border-radius: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--text-blue); font-size: 24px; transition: 0.2s; }
+        .nav-item.active { color: var(--honey-yellow); background: rgba(255,204,0,0.15); border: 1px solid rgba(255, 204, 0, 0.3); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+        .logout-btn { margin-top: auto; margin-bottom: 20px; color: #ff6b6b; } 
+
+        .loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: #001a4d; z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; color: var(--honey-yellow); transition: opacity 0.5s; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,204,0,0.3); border-top-color: var(--honey-yellow); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- MOBILE OVERRIDES (Must be at the END) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            /* Fix Scrolling on Mobile: Ensure container height is managed */
+            #app-content { flex-direction: column; padding-bottom: 70px; /* Space for nav */ }
+            
+            .browser-section { flex: 1; min-height: 0; }
+            .channel-grid { padding-bottom: 20px; } /* Extra padding inside grid */
+
+            .sidebar { 
+                position: fixed; bottom: 0; left: 0; right: 0;
+                width: 100%; height: 70px; 
+                flex-direction: row; justify-content: space-around; 
+                padding: 0; border-right: none; border-top: 2px solid var(--honey-yellow);
+                background: #00122b; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+                z-index: 9999;
+            }
+            
+            .nav-item { margin: 0; width: auto; flex: 1; height: 100%; border: none; border-radius: 0; }
+            .nav-item.active { border-top: 4px solid var(--honey-yellow); border-bottom: none; border-left: none; border-right: none; background: transparent; box-shadow: none; }
+            
+            .app-logo { display: none; }
+            .logout-btn { margin-top: 0; margin-bottom: 0; }
+            .player-wrapper { height: 35vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <div class="login-title">The Honey TV</div>
+            <input type="email" id="email" class="login-input" placeholder="Email ID">
+            <input type="password" id="password" class="login-input" placeholder="Password">
+            <button class="login-btn" onclick="login()">Enter App</button>
+            <div id="login-error" class="error-msg">Incorrect Email or Password</div>
+        </div>
+    </div>
+
+    <div id="app-content">
+        
+        <div class="loading-overlay" id="loader">
+            <div class="spinner"></div>
+            <div style="font-family:'Fredoka',sans-serif;">Loading Honey TV...</div>
+        </div>
+
+        <div class="main-content">
+            <div class="player-wrapper">
+                <video id="video" controls playsinline poster="profile.jpg"></video>
+            </div>
+            <div class="browser-section">
+                <div class="toolbar">
+                    <div class="section-title" id="tab-title">My Favorites</div>
+                    <input type="text" id="search" class="search-box" placeholder="Search All...">
+                </div>
+                <div class="channel-grid" id="grid"></div>
+            </div>
+        </div>
+
+        <nav class="sidebar">
+            <div class="app-logo">The<br>Honey TV</div>
+            <div class="nav-item active" onclick="switchTab('favorites')" title="Favorites">♥</div>
+            <div class="nav-item" onclick="switchTab('pakistan')" title="Pakistan">PK</div>
+            <div class="nav-item" onclick="switchTab('sports')" title="Sports">⚽</div>
+            <div class="nav-item" onclick="switchTab('all')" title="All">🌐</div>
+            <div class="nav-item logout-btn" onclick="logout()" title="Logout">⏻</div>
+        </nav>
+    </div>
+
+    <script>
+        // --- 1. FIREBASE CONFIGURATION ---
+        // PASTE YOUR FIREBASE CONFIG HERE
+        const firebaseConfig = {
+  apiKey: "AIzaSyAhEn4Etmibl9ddkLVU6FZRrINpud59V_M",
+  authDomain: "the-honey-tv.firebaseapp.com",
+  projectId: "the-honey-tv",
+  storageBucket: "the-honey-tv.firebasestorage.app",
+  messagingSenderId: "675438332226",
+  appId: "1:675438332226:web:e8358260d723549b7760db"
+};
+
+        // Initialize
+        try {
+            firebase.initializeApp(firebaseConfig);
+        } catch(e) { console.error("Firebase Error:", e); }
+        const auth = firebase.auth();
+
+        // --- 2. LOGIC ---
+        const loginOverlay = document.getElementById('login-overlay');
+        const appContent = document.getElementById('app-content');
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loginOverlay.style.display = 'none';
+                appContent.style.display = 'flex'; 
+                initApp();
+            } else {
+                loginOverlay.style.display = 'flex';
+                appContent.style.display = 'none';
+            }
+        });
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('login-error');
+            auth.signInWithEmailAndPassword(email, pass).catch((error) => {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = "Error: " + error.message;
+            });
+        }
+
+        // --- UPDATED LOGOUT FUNCTION ---
+        function logout() {
+            if(confirm("Are you sure you want to logout?")) {
+                auth.signOut();
+                window.location.reload();
+            }
+        }
+
+        // --- 3. APP FUNCTIONS ---
+        const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+        let db = { all: [], pakistan: [], sports: [], favorites: [] };
+        let currentTab = 'favorites';
+        let favoritesList = JSON.parse(localStorage.getItem('honeyTvFavs')) || [];
+        const video = document.getElementById('video');
+        const grid = document.getElementById('grid');
+        const loader = document.getElementById('loader');
+        const searchInput = document.getElementById('search');
+        let hls;
+
+        window.history.replaceState({tab: 'favorites'}, null, '');
+        window.addEventListener('popstate', function(event) {
+            if (currentTab !== 'favorites') switchTab('favorites', false);
+        });
+
+        async function initApp() {
+            try {
+                const res = await fetch(PLAYLIST_URL);
+                const text = await res.text();
+                parseM3U(text);
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 500);
+                refreshFavoritesDB();
+                renderGrid(db.favorites);
+            } catch (e) { console.error(e); }
+        }
+
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            let item = {};
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('#EXTINF:')) {
+                    const logoMatch = line.match(/tvg-logo="([^"]*)"/);
+                    const groupMatch = line.match(/group-title="([^"]*)"/);
+                    const countryMatch = line.match(/tvg-country="([^"]*)"/);
+                    const nameParts = line.split(',');
+                    const name = nameParts[nameParts.length - 1].trim();
+                    item = {
+                        name: name,
+                        logo: logoMatch ? logoMatch[1] : 'https://via.placeholder.com/50/FFCC00/000000?text=TV',
+                        group: (groupMatch ? groupMatch[1] : '').toLowerCase(),
+                        country: (countryMatch ? countryMatch[1] : '').toUpperCase()
+                    };
+                } else if (line.startsWith('http')) {
+                    item.url = line;
+                    const n = item.name.toLowerCase();
+                    const isPak = item.group.includes('pakistan') || n.includes('pakistan') || n.includes('urdu') || item.country === 'PK';
+                    const isSports = item.group.includes('sport') || n.includes('sport') || item.group.includes('football') || item.group.includes('cricket');
+                    db.all.push(item);
+                    if (isPak) db.pakistan.push(item);
+                    if (isSports) db.sports.push(item);
+                    item = {};
+                }
+            });
+        }
+
+        function toggleFavorite(e, url) {
+            e.stopPropagation();
+            const index = favoritesList.indexOf(url);
+            if (index === -1) favoritesList.push(url);
+            else favoritesList.splice(index, 1);
+            localStorage.setItem('honeyTvFavs', JSON.stringify(favoritesList));
+            refreshFavoritesDB();
+            if(searchInput.value !== '') doSearch(searchInput.value);
+            else renderGrid(db[currentTab]);
+        }
+
+        function refreshFavoritesDB() { db.favorites = db.all.filter(ch => favoritesList.includes(ch.url)); }
+
+        function renderGrid(channels) {
+            grid.innerHTML = '';
+            if(channels.length === 0) {
+                const msg = currentTab === 'favorites' && searchInput.value === '' ? "No favorites yet.<br>Go to 'All' or 'PK' to add some!" : "No channels found.";
+                grid.innerHTML = `<div style="text-align:center; padding:30px; color:#aaa; width:100%;">${msg}</div>`;
+                return;
+            }
+            const limit = (channels.length > 200 && searchInput.value === '') ? 100 : channels.length;
+            const list = channels.slice(0, limit);
+            list.forEach(ch => {
+                const isFav = favoritesList.includes(ch.url);
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.innerHTML = `
+                    <div class="fav-btn ${isFav ? 'is-fav' : ''}" onclick="toggleFavorite(event, '${ch.url}')">
+                        ${isFav ? '♥' : '♡'}
+                    </div>
+                    <img src="${ch.logo}" class="card-img" loading="lazy" onerror="this.src='https://via.placeholder.com/50/FFCC00/000000?text=?'">
+                    <div class="card-title">${ch.name}</div>
+                `;
+                card.onclick = () => playStream(ch.url);
+                grid.appendChild(card);
+            });
+        }
+
+        function playStream(source) {
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = source; video.play(); }
+            if(window.innerWidth < 768) window.scrollTo(0,0);
+        }
+
+        window.switchTab = function(tab, updateHistory = true) {
+            if (updateHistory && tab !== 'favorites') window.history.pushState({tab: tab}, null, '');
+            currentTab = tab;
+            searchInput.value = '';
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeBtn = document.querySelector(`.nav-item[onclick="switchTab('${tab}')"]`);
+            if(activeBtn) activeBtn.classList.add('active');
+            document.getElementById('tab-title').textContent = { 'favorites': 'My Favorites', 'pakistan': 'Pakistan Channels', 'sports': 'Sports', 'all': 'All Channels' }[tab];
+            refreshFavoritesDB();
+            renderGrid(db[tab]);
+        }
+
+        searchInput.addEventListener('input', (e) => doSearch(e.target.value));
+
+        function doSearch(val) {
+            const term = val.toLowerCase();
+            if(term === '') { renderGrid(db[currentTab]); return; }
+            const filtered = db.all.filter(ch => ch.name.toLowerCase().includes(term));
+            renderGrid(filtered);
+        }
+    </script>
+</body>
+</html>
