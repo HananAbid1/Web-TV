@@ -243,7 +243,8 @@
         }
 
         // --- 3. APP FUNCTIONS ---
-        const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+        const PLAYLIST_URL = './playlist.m3u';
+
         let db = { all: [], pakistan: [], sports: [], favorites: [] };
         let currentTab = 'favorites';
         let favoritesList = JSON.parse(localStorage.getItem('honeyTvFavs')) || [];
